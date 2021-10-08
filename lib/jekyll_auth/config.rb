@@ -24,6 +24,15 @@ class JekyllAuth
     Regexp.new(whitelist.join("|")) unless whitelist.nil?
   end
 
+  def self.levels (arg)
+    level = config['levels'][arg]
+    Regexp.new(level.join("|")) unless level.nil?
+  end
+
+  def self.num_levels
+      config['levels'].length()
+  end
+
   def self.ssl?
     !!config["ssl"]
   end
