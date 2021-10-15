@@ -21,7 +21,7 @@ class JekyllAuth
     include JekyllAuth::Helpers
 
     before do
-      for lev in 0..(JekyllAuth.num_levels - 1)
+      for lev in (JekyllAuth.num_levels - 1).downto(0)
         if matches_level?(lev)
           logger.info "Authentication strategy: #{authentication_strategy(lev)} for level #{lev}"
           case authentication_strategy(lev)
