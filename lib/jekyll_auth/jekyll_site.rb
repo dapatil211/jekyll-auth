@@ -2,6 +2,9 @@
 
 class JekyllAuth
   class JekyllSite < Sinatra::Base
+    configure :production, :development do
+      enable :logging
+    end
     register Sinatra::Index
     set :public_folder, File.expand_path(JekyllAuth.destination, Dir.pwd)
     use_static_index "index.html"
@@ -14,16 +17,26 @@ class JekyllAuth
 
     post '/update' do
       request.body.rewind
-      data = JSON.parse request.body.read
-      if data.is_a?(Hash) and data.key?('pat')
-        `./pull_notes.sh #{data['pat']}`
-        if $?.success?
-          'Updated Internal Website'
-        else
-          'Not authorized'
-        end
+      begin
+        data = JSON.parse request.body.read
+      rescue JSON::ParserError => e
+        logger.info "Malformed json"
+        halt 400, 'Not valid json'
       else
-        'Not valid request'
+        logger.info "Updating"
+        if data.is_a?(Hash) and data.key?('pat')
+          `./pull_notes.sh #{data['pat']}`
+          if $?.success?
+            logger.info "Successfully updated"
+            [200, 'Updated Internal Website']
+          else
+            logger.info "Unauthorized to update"
+            halt 403, 'Not authorized'
+          end
+        else
+          logger.info "Invalid request style"
+          halt 400, 'Not valid request'
+        end
       end
     end
 
