@@ -15,7 +15,16 @@ class JekyllAuth
     post '/update' do
       request.body.rewind
       data = JSON.parse request.body.read
-      `./pull_notes.sh #{data['pat']}`
+      if data.is_a?(Hash) and data.key?('pat')
+        `./pull_notes.sh #{data['pat']}`
+        if $?.success?
+          'Updated Internal Website'
+        else
+          'Not authorized'
+        end
+      else
+        'Not valid request'
+      end
     end
 
     not_found do
