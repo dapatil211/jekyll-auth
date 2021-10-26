@@ -27,6 +27,7 @@ class JekyllAuth
         if data.is_a?(Hash) and data.key?('pat')
           `./pull_notes.sh #{data['pat']}`
           if $?.success?
+            `./copy_notes.sh`
             logger.info "Successfully updated"
             [200, 'Updated Internal Website']
           else

@@ -29,6 +29,7 @@ Mercenary.program("jekyll-auth") do |p|
   # to add functionality here in the future
   p.command(:build) do |c|
     c.syntax "build"
+    c.option "watch", "--watch", 'Watch for changes'
     c.description "Build the Jekyll site"
     c.action do |_args, options|
       require "jekyll"
